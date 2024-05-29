@@ -1,13 +1,27 @@
 import type { Config } from "tailwindcss";
+import {nextui} from "@nextui-org/react";
 
 const config: Config = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}"
   ],
   theme: {
     extend: {
+      colors: {
+        "snow1": "#ECEFF4",
+        "snow2": "#E5E9F0",
+        "snow3": "#D8DEE9",
+        "polar1": "#4C566A",
+        "polar2": "#434C5E",
+        "polar3": "#3B4252",
+        "polar4": "#2E3440",
+        "frost1": "#81A1C1",
+        "frost2": "#5E81AC"
+
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
@@ -15,6 +29,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [require("daisyui")],
+  plugins: [require("daisyui"), nextui()],
 };
 export default config;
