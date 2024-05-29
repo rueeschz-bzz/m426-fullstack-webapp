@@ -1,4 +1,6 @@
 import Image from "next/image";
+import IconCloud from "@/components/ui/icon-cloud";
+
 
 export default function Home() {
   return (
@@ -16,6 +18,7 @@ export default function Home() {
             rel="noopener noreferrer"
           >
             By{" "}
+            <IconCloud iconSlugs={["firebase", "nextdotjs", "nest", "vuejs", "prisma"]}></IconCloud>
             <Image
               src="/vercel.svg"
               alt="Vercel Logo"
