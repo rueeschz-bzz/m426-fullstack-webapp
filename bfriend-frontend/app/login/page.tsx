@@ -1,5 +1,5 @@
-export default function login(){
+export default function page(){
     return(
     <div>Hello World</div>
     )
-}
+};
