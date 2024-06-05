@@ -3,10 +3,6 @@ const session = require("express-session")
 
 const authentification = require("./controller/authController.js")
 const accountManagement = require("./controller/accController.js")
-<<<<<<< HEAD
-
-=======
->>>>>>> 95146fd8fb7a9b6d0fd4554cf47130427a5cc5e6
 
 const app = express()
 const port = 9000
