@@ -28,10 +28,10 @@ export default function Navbarprod() {
             </NavbarContent>
             <NavbarContent justify="end">
                 <NavbarItem className="hidden lg:flex">
-                    <Link className={"text-polar2"} href="#">Login</Link>
+                    <Link className={"text-polar2"} href="/login">Login</Link>
                 </NavbarItem>
                 <NavbarItem>
-                    <Button as={Link} className={"bg-frost2"} href="page" variant="flat">
+                    <Button as={Link} className={"bg-frost2"} href="/signup" variant="flat">
                         Sign Up
                     </Button>
                 </NavbarItem>
