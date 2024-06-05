@@ -82,7 +82,6 @@ router.post("/api/login", async (req, res) => {
                 const userData = result.rows[0]
                 
                 if (userData.username === username && userData.password === pw) {
-                    console.log("Access granted!")
                     req.session.auth = "auth";
                     req.session.user = username;
                     res.status(202).send("Access granted.") // replace with redirect
