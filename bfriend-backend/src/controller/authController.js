@@ -1,23 +1,44 @@
 const express = require("express")
 const SHA256 = require("crypto-js/sha256")
-const { createClient } = require("@supabase/supabase-js") 
+const { Client } = require("pg");
+
 
 const router = express.Router()
 
-const supabaseURL = "https://vpphyjfdeemfzziyoqoh.supabase.co/"
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwcGh5amZkZWVtZnp6aXlvcW9oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTY5ODY3NDAsImV4cCI6MjAzMjU2Mjc0MH0.Iyptdm7MDR2-aUBuW-rZb74nB1Lmh1IChI48m2BqAmI" 
-const supabase = createClient(supabaseURL, supabaseKey)
+const client = new Client({
+    user: 'postgres.vpphyjfdeemfzziyoqoh',
+    host: 'aws-0-eu-central-1.pooler.supabase.com',
+    database: 'postgres',
+    password: '*mx5i-psSERVnZ)',
+    port: 5432,
+    ssl: {
+        rejectUnauthorized: false,
+    }
+});
+
+
+client.connect(err => {
+    if (err) {
+        console.error('Connection error', err.stack);
+    } else {
+        console.log('Connected to the database');
+    }
+});
+
+  
 
 router.get("/api/login", (req, res) => {
     if (req.session.auth === "auth") {
         res.redirect("/")
+    } else {
+        res.send("Nothing here")
     }
 })
 
 router.post("/api/login", async (req, res) => {
     if(req.session.auth !== "aut") {
-        const username = JSON.stringify(SHA256(req.body.username).words)
-        const email = JSON.stringify(SHA256(req.body.email).words)
+        const username = JSON.stringify(req.body.username)
+        const email = JSON.stringify(req.body.email)
         const password = JSON.stringify(SHA256(req.body.password).words)
         
         console.log("Uname" + username, "Email" + email, "PW" + password)
@@ -26,17 +47,12 @@ router.post("/api/login", async (req, res) => {
             return res.status(400).send('Missing required fields');
           }
         
+        const query = "INSERT INTO user_data (username, email, password) VALUES ($1, $2, $3)";
+        const values = [username, email, password]
+
         try {
-            const { error } = await supabase
-              .from("user_data")
-              .insert([{ username, email, password }]);
-            
-            if (error) {
-                throw error;
-            }
-
-            res.status(200).send("Data inserted correctly");
-
+            await client.query(query, values);
+            res.status(200).send("Data inserted successfully!");
         } catch (error) {
             res.status(500).send(`Error inserting data: ${error.message}`)
         }
