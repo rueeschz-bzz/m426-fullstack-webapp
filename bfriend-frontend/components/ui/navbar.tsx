@@ -31,7 +31,7 @@ export default function Navbarprod() {
                     <Link className={"text-polar2"} href="#">Login</Link>
                 </NavbarItem>
                 <NavbarItem>
-                    <Button as={Link} className={"bg-frost2"} href="login" variant="flat">
+                    <Button as={Link} className={"bg-frost2"} href="page" variant="flat">
                         Sign Up
                     </Button>
                 </NavbarItem>
