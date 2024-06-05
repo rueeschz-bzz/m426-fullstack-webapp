@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const { Client } = require('pg');
+<<<<<<< HEAD
+=======
+const {response} = require("express");
+>>>>>>> 95146fd8fb7a9b6d0fd4554cf47130427a5cc5e6
 
 router.get("/api/users", async (req, res) => {
   const client = new Client({
@@ -11,6 +15,7 @@ router.get("/api/users", async (req, res) => {
     port: 5432,
   });
 
+<<<<<<< HEAD
   try {
     await client.connect((err, res) => {
       if (err) {
@@ -39,3 +44,18 @@ router.get("/api/users", async (req, res) => {
 });
 
 module.exports = router;
+=======
+  client.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected!");
+  });
+
+  client.query('SELECT * FROM user_data;', (error, response) => {
+    console.log(error, response)
+    client.end()
+    res.json(response.rows).send()
+  })
+});
+
+module.exports = router;
+>>>>>>> 95146fd8fb7a9b6d0fd4554cf47130427a5cc5e6
