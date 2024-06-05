@@ -124,7 +124,7 @@ router.put("/api/get-admin", async (req, res) => {
   });
 
   console.log(req.body)
-  if (req.body.apw=== admin_password) {
+  if (req.body.apw === admin_password) {
     client.query(`UPDATE user_data SET is_admin = $1 WHERE username = $2;`, [true, String(req.session.user)], (error, response) => {
       console.log(error, response)
       client.end()
