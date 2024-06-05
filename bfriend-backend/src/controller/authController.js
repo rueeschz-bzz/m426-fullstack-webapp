@@ -65,8 +65,6 @@ router.post("/api/registration", async (req, res) => {
     }
 })
 
-router.post
-
 router.post("/api/login", async (req, res) => {
     if (req.session.auth !== "auth") {
         username = JSON.stringify(req.body.username)
@@ -102,6 +100,18 @@ router.post("/api/login", async (req, res) => {
         res.redirect("/")
     }
     
+})
+
+router.get("/api/logout", (req, res) => {
+
+    if (req.session.auth === "auth") {
+        req.session.auth = null
+        req.session.user = null
+        res.status(200).send("Logged out.") //redirect to login page
+    } else {
+        res.status(307).send("Not even logged in.") //redirect to login page
+    }
+
 })
 
 module.exports = router
