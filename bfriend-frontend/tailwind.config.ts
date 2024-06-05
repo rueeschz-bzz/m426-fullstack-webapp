@@ -10,6 +10,19 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      animation: {
+        orbit: "orbit calc(var(--duration)*1s) linear infinite",
+      },
+      keyframes: {
+        orbit: {
+          "0%": {
+            transform: "rotate(0deg) translateY(calc(var(--radius) * 1px)) rotate(0deg)",
+          },
+          "100%": {
+            transform: "rotate(360deg) translateY(calc(var(--radius) * 1px)) rotate(-360deg)",
+          },
+        },
+      },
       colors: {
         "snow1": "#ECEFF4",
         "snow2": "#E5E9F0",
@@ -19,7 +32,8 @@ const config: Config = {
         "polar3": "#3B4252",
         "polar4": "#2E3440",
         "frost1": "#81A1C1",
-        "frost2": "#5E81AC"
+        "frost2": "#5E81AC",
+
 
       },
       backgroundImage: {
