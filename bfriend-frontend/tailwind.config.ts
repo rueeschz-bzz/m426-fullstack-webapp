@@ -6,10 +6,15 @@ const config: Config = {
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}"
+    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
+      "./app/login/*.tsx",
+      "./app/signup/*.tsx"
   ],
   theme: {
     extend: {
+      screens: {
+        "lp-res":"1120px"
+      },
       animation: {
         orbit: "orbit calc(var(--duration)*1s) linear infinite",
       },

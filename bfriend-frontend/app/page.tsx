@@ -12,8 +12,8 @@ export default function Home() {
     <NextUIProvider>
     <Navbarprod></Navbarprod>
     <main className="flex w-full min-h-screen flex-col bg-snow1 items-center justify-between ">
-      <div className={"flex justify-around w-full py-auto md:flex-col xs:mx-auto lg:flex-row"}>
-          <div className={"flex flex-row flex-col"}>
+      <div className={"flex justify-around w-full py-auto lp-res:flex-row xs:flex-col"}>
+          <div className={"flex flex-col"}>
      <FadeText className={"text-polar4 text-5xl font-bold mt-32"} text={"Find your hobbies"} direction={"up"}  framerProps={{
        show: { transition: { delay: 0.2 } },
      }}></FadeText>
