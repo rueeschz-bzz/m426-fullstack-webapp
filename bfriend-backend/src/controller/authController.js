@@ -36,7 +36,7 @@ router.get("/api/login", (req, res) => {
 })
 
 router.post("/api/registration", async (req, res) => {
-    if(req.session.auth !== "aut") {
+    if(req.session.auth !== "auth") {
         const name = JSON.stringify(req.body.name)
         const lastname = JSON.stringify(req.body.lastname)
         const age = JSON.stringify(req.body.age)
@@ -65,6 +65,52 @@ router.post("/api/registration", async (req, res) => {
     }
 })
 
-router.post
+router.post("/api/login", async (req, res) => {
+    if (req.session.auth !== "auth") {
+        username = JSON.stringify(req.body.username)
+        pw = JSON.stringify(SHA256(req.body.password).words)
+        
+        const query = "SELECT username, password FROM user_data WHERE username = $1"
+        const values = [username];
+
+        try {
+            const result = await client.query(query, values)
+            
+            if (result.rows.length === 0) {
+                return res.status(404).send("User not found.")
+            } else {
+                const userData = result.rows[0]
+                
+                if (userData.username === username && userData.password === pw) {
+                    req.session.auth = "auth";
+                    req.session.user = username;
+                    res.status(202).send("Access granted.") // replace with redirect
+                } else {
+                    res.status(307).send("Access denied.") //replace with redirect
+                    
+                }
+                
+            }
+        } catch (error) {
+            res.status(500).send(`Error retrieving data: ${error.message}`)
+        }
+
+    } else {
+        res.redirect("/")
+    }
+    
+})
+
+router.get("/api/logout", (req, res) => {
+
+    if (req.session.auth === "auth") {
+        req.session.auth = null
+        req.session.user = null
+        res.status(200).send("Logged out.") //redirect to login page
+    } else {
+        res.status(307).send("Not even logged in.") //redirect to login page
+    }
+
+})
 
 module.exports = router
