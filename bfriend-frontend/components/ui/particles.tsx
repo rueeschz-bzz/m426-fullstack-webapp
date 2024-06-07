@@ -262,7 +262,7 @@ const Particles: React.FC<ParticlesProps> = ({
 
     return (
         <div className={className} ref={canvasContainerRef} aria-hidden="true">
-            <canvas ref={canvasRef} className="h-full w-full z-0" />
+            <canvas ref={canvasRef} className="h-full w-full -z-[9999]" />
         </div>
     );
 };

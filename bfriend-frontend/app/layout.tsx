@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
 
   return (
-      <html lang="de" suppressHydrationWarning>
+      <html data-theme={"nord"} lang="de" suppressHydrationWarning>
       <head>
         <title>Home</title>
 

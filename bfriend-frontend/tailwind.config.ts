@@ -10,6 +10,9 @@ const config: Config = {
       "./app/login/*.tsx",
       "./app/signup/*.tsx"
   ],
+  daisyui: {
+    themes : ["light", "dark", "nord"]
+  },
   theme: {
     extend: {
       screens: {
