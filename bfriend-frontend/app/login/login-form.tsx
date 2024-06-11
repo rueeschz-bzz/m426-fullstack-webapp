@@ -1,7 +1,9 @@
 "use client"
-
+/*
+Stuff still broken, form submission not working
+*/
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import {useEffect, useState} from "react"
 
 export default function DevLoginform () {
 
@@ -11,31 +13,49 @@ export default function DevLoginform () {
     const [password, setpassword] = useState("")
     const [isLoading, setIsLoading] = useState(false)
 
+    // @ts-ignore
     const handleSubmit = async (e) => {
         e.preventDefault()
         setIsLoading(true)
         const login= {username, password}
-
-        const res = await fetch("localhost:9000/api/login", {
+        console.log("submitted")
+        try{
+        const res = fetch("localhost:9000/api/login", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(login)
+
+
         })
-        if (res.status === 202) {
-            router.refresh()
-            router.push("/")
+
+            if (res.status === 202) {
+                router.refresh()
+                router.push("/")
+            }
+            else if(res.status === 404){
+                router.refresh()
+                router.push("/signup")
+            }
+            else {
+                router.refresh()
+                router.push("/")
+
+            }
+
         }
-        else {
-            router.refresh()
-            router.push("/")
+        catch (e: any | unknown) {
+            console.log(e)
+
         }
+
+
     }
 
 
 
 
     return (
-        <form onSubmit={handleSubmit} action={"api"} method={"POST"} encType={"application/json"} className={"h-[36rem] flex-none ml-10"}>
+        <form onSubmit={handleSubmit}  className={"h-[36rem] flex-none ml-10"}>
             <label className={"text-xl"}>Username</label><br />
             <input
                 required={true}
