@@ -69,8 +69,8 @@ router.post("/api/registration", async (req, res) => {
 
 router.post("/api/login", async (req, res) => {
     if (req.session.auth !== "auth") {
-        username = JSON.stringify(req.body.username)
-        pw = JSON.stringify(SHA256(req.body.password).words)
+        const username = JSON.stringify(req.body.username)
+        const pw = JSON.stringify(SHA256(req.body.password).words)
         
         const query = "SELECT username, password FROM user_data WHERE username = $1"
         const values = [username];
