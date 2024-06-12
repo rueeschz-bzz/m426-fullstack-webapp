@@ -20,6 +20,7 @@ const client = new Client({
 
 client.connect(err => {
     if (err) {
+
         console.error('Connection error', err.stack);
     } else {
         console.log('Connected to the database (auth)');
@@ -85,7 +86,7 @@ router.post("/api/login", async (req, res) => {
                 if (userData.username === username && userData.password === pw) {
                     req.session.auth = "auth";
                     req.session.user = username;
-                    res.status(202).send("Access granted.") // replace with redirect
+                    res.status(200).send("Access granted.") // replace with redirect
                 } else {
                     res.status(307).send("Access denied.") //replace with redirect
                     
