@@ -23,4 +23,3 @@ app.use("", accountManagement)
 app.listen(port, () => {
     console.log("Bfriend is running on port:", port)
 })
-
