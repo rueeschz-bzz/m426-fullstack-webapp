@@ -32,7 +32,7 @@ export default function DevLoginform () {
 
             })
 
-            if (res.status === 202) {
+            if (res.status === 200) {
                 router.refresh()
                 router.push("/")
             }
