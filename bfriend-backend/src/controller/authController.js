@@ -1,16 +1,18 @@
-const express = require("express")
-const SHA256 = require("crypto-js/sha256")
+const express = require("express");
+const SHA256 = require("crypto-js/sha256");
 const { Client } = require("pg");
+require("dotenv").config();
+
 
 
 const router = express.Router()
 
 const client = new Client({
-    user: 'postgres.vpphyjfdeemfzziyoqoh',
-    host: 'aws-0-eu-central-1.pooler.supabase.com',
-    database: 'postgres',
-    password: '*mx5i-psSERVnZ)',
-    port: 5432,
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT,
     ssl: {
         rejectUnauthorized: false,
     }
