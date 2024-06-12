@@ -3,6 +3,7 @@ const session = require("express-session")
 
 const authentification = require("./controller/authController.js")
 const accountManagement = require("./controller/accController.js")
+const dataManagement = require("./controller/dataController.js")
 
 const app = express()
 const port = 9000
@@ -19,6 +20,7 @@ app.use(session({
 
 app.use("", authentification)
 app.use("", accountManagement)
+app.use("", dataManagement)
 
 app.listen(port, () => {
     console.log("Bfriend is running on port:", port)
