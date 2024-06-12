@@ -3,18 +3,29 @@ const router = express.Router();
 const {Client} = require('pg');
 const admin_password = "1234";
 
-const dbConfig = {
+const client = new Client({
     user: 'postgres.vpphyjfdeemfzziyoqoh',
     host: 'aws-0-eu-central-1.pooler.supabase.com',
     database: 'postgres',
     password: '*mx5i-psSERVnZ)',
     port: 5432,
-};
+    ssl: {
+        rejectUnauthorized: false,
+    }
+});
+
+
+client.connect(err => {
+    if (err) {
+        console.error('Connection error', err.stack);
+    } else {
+        console.log('Connected to the database');
+    }
+});
 
 
 const withDbClient = async (req, res, next) => {
-    const client = new Client(dbConfig);
-    try {
+    try { 
         await client.connect();
         req.dbClient = client;
         next();
@@ -43,7 +54,6 @@ const isAdmin = async (client, username) => {
 
 
 router.get("/api/users", [withDbClient, isAuthenticated], async (req, res) => {
-    const client = req.dbClient;
     try {
         const username = req.session.user;
         const userIsAdmin = await isAdmin(client, username);
@@ -66,7 +76,6 @@ router.get("/api/users", [withDbClient, isAuthenticated], async (req, res) => {
 
 
 router.get("/api/users/:id", [withDbClient, isAuthenticated], async (req, res) => {
-    const client = req.dbClient;
     try {
         const username = req.session.user;
         const userIsAdmin = await isAdmin(client, username);
@@ -88,7 +97,6 @@ router.get("/api/users/:id", [withDbClient, isAuthenticated], async (req, res) =
 
 
 router.get("/api/my-data", [withDbClient, isAuthenticated], async (req, res) => {
-    const client = req.dbClient;
     try {
         const query = 'SELECT * FROM user_data WHERE username = $1';
         const values = [req.session.user];
@@ -103,7 +111,6 @@ router.get("/api/my-data", [withDbClient, isAuthenticated], async (req, res) => 
 
 
 router.put("/api/deactivate", [withDbClient, isAuthenticated], async (req, res) => {
-    const client = req.dbClient;
     try {
         const query = 'UPDATE user_data SET active_profile = $1 WHERE username = $2';
         const values = [false, req.session.user];
@@ -118,7 +125,6 @@ router.put("/api/deactivate", [withDbClient, isAuthenticated], async (req, res) 
 
 
 router.put("/api/activate", [withDbClient, isAuthenticated], async (req, res) => {
-    const client = req.dbClient;
     try {
         const query = 'UPDATE user_data SET active_profile = $1 WHERE username = $2';
         const values = [true, req.session.user];
@@ -133,7 +139,6 @@ router.put("/api/activate", [withDbClient, isAuthenticated], async (req, res) =>
 
 
 router.delete("/api/delete", withDbClient, async (req, res) => {
-    const client = req.dbClient;
     try {
         const query = 'DELETE FROM user_data WHERE username = $1';
         const values = [req.session.user];
@@ -148,7 +153,6 @@ router.delete("/api/delete", withDbClient, async (req, res) => {
 
 
 router.put("/api/get-admin", withDbClient, async (req, res) => {
-    const client = req.dbClient;
     try {
         if (req.body.apw === admin_password) {
             const query = 'UPDATE user_data SET is_admin = $1 WHERE username = $2';
