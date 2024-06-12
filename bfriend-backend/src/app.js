@@ -1,13 +1,17 @@
 const express = require("express")
 const session = require("express-session")
+const cors = require("cors")
 
 const authentification = require("./controller/authController.js")
 const accountManagement = require("./controller/accController.js")
 const dataManagement = require("./controller/dataController.js")
 
 const app = express()
-const port = 9000
+const port = 3000
 
+app.use(cors({
+    origin: "*"
+}))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
