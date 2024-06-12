@@ -1,7 +1,8 @@
 const express = require("express");
 const {Client} = require('pg');
 require("dotenv").config();
-const admin_password = "1234";
+const admin_password = process.env.ADMIN_PW;
+
 
 const router = express.Router();
 
@@ -15,7 +16,6 @@ const client = new Client({
         rejectUnauthorized: false,
     }
 });
-
 
 client.connect(err => {
     if (err) {
@@ -132,13 +132,18 @@ router.delete("/api/delete", async (req, res) => {
 });
 
 
-router.put("/api/get-admin", async (req, res) => {
+router.put("/api/get-admin", isAuthenticated, async (req, res) => {
     try {
-        if (req.body.apw === admin_password) {
+        const username = req.session.user;
+        const userIsAdmin = await isAdmin(client, username);
+        if (userIsAdmin) {
+            res.send('Du bist schon ein Administrator');
+        }
+        else if (req.body.apw === admin_password) {
             const query = 'UPDATE user_data SET is_admin = $1 WHERE username = $2';
             const values = [true, req.session.user];
             await client.query(query, values);
-            res.send();
+            res.send('Du Bist jetzt ein Administrator');
         } else {
             res.send("Das Passwort ist falsch!");
         }

@@ -4,7 +4,6 @@ const { Client } = require("pg");
 require("dotenv").config();
 
 
-
 const router = express.Router()
 
 const client = new Client({
