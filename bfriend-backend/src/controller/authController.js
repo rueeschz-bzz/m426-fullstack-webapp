@@ -23,7 +23,7 @@ client.connect(err => {
     if (err) {
         console.error('Connection error', err.stack);
     } else {
-        console.log('Connected to the database');
+        console.log('Connected to the database (auth)');
     }
 });
 

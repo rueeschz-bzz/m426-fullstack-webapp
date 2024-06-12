@@ -20,6 +20,14 @@ const db_client = new Client({
         rejectUnauthorized: false,
     }
 });
+
+db_client.connect(err => {
+    if (err) {
+        console.error('Connection error', err.stack);
+    } else {
+        console.log('Connected to the database (data)');
+    }
+});
 /*st_client.folders.getItems("0", null, (err, data) => {
     if (err) {
         console.error("[Error]: Faild to get rootfolder items: ", err)
