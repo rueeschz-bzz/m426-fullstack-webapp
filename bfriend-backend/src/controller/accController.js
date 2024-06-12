@@ -1,161 +1,150 @@
 const express = require("express");
+const {Client} = require('pg');
+require("dotenv").config();
+const admin_password = "1234";
+
 const router = express.Router();
-const { Client } = require('pg');
-const admin_password = "1234"
 
-router.get("/api/users", async (req, res) => {
-  const client = new Client({
-    user: 'postgres.vpphyjfdeemfzziyoqoh',
-    host: 'aws-0-eu-central-1.pooler.supabase.com',
-    database: 'postgres',
-    password: '*mx5i-psSERVnZ)',
-    port: 5432,
-  });
-
-  client.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected!");
-  });
-
-  client.query('SELECT * FROM user_data;', (error, response) => {
-    console.log(error, response)
-    client.end()
-    res.json(response.rows).send()
-  })
+const client = new Client({
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT,
+    ssl: {
+        rejectUnauthorized: false,
+    }
 });
 
 
-router.get("/api/users/:id", async (req, res) => {
-  const client = new Client({
-    user: 'postgres.vpphyjfdeemfzziyoqoh',
-    host: 'aws-0-eu-central-1.pooler.supabase.com',
-    database: 'postgres',
-    password: '*mx5i-psSERVnZ)',
-    port: 5432,
-  });
-
-  client.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected!");
-  });
-
-  client.query(`SELECT * FROM user_data WHERE id = ${req.params.id};`, (error, response) => {
-    console.log(error, response)
-    client.end()
-    res.json(response.rows).send()
-  })
+client.connect(err => {
+    if (err) {
+        console.error('Connection error', err.stack);
+    } else {
+        console.log('Connected to the database (acc)');
+    }
 });
 
-router.get("/api/my-data", async (req, res) => {
-  const client = new Client({
-    user: 'postgres.vpphyjfdeemfzziyoqoh',
-    host: 'aws-0-eu-central-1.pooler.supabase.com',
-    database: 'postgres',
-    password: '*mx5i-psSERVnZ)',
-    port: 5432,
-  });
 
-  client.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected!");
-  });
+const isAuthenticated = (req, res, next) => {
+    if (!req.session || req.session.auth !== 'auth') {
+        return res.status(401).send('Not Logged in');
+    }
+    next();
+};
 
-  client.query(`SELECT * FROM user_data WHERE username = $1;`, [String(req.session.user)], (error, response) => {
-    console.log(error, response)
-    client.end()
-    res.json(response.rows).send()
-  })
+const isAdmin = async (client, username) => {
+    const query = "SELECT is_admin FROM user_data WHERE username = $1";
+    const values = [username];
+    const result = await client.query(query, values);
+    const userData = result.rows[0];
+    if (!userData) {
+        throw new Error('User not found');
+    }
+    return userData.is_admin;
+};
+
+
+router.get("/api/users", isAuthenticated, async (req, res) => {
+    try {
+        const username = req.session.user;
+        const userIsAdmin = await isAdmin(client, username);
+
+        if (userIsAdmin) {
+            const allUsers = await client.query('SELECT * FROM user_data;');
+            return res.json(allUsers.rows);
+        } else {
+            return res.status(403).send('Access denied. Admins only.');
+        }
+    } catch (err) {
+        if (err.message === "User not found") {
+            return res.status(404).send("User not found.");
+        }
+        res.status(500).send("Database query error");
+    }
 });
 
-router.put("/api/deactivate", async (req, res) => {
-  const client = new Client({
-    user: 'postgres.vpphyjfdeemfzziyoqoh',
-    host: 'aws-0-eu-central-1.pooler.supabase.com',
-    database: 'postgres',
-    password: '*mx5i-psSERVnZ)',
-    port: 5432,
-  });
 
-  client.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected!");
-  });
+router.get("/api/users/:id", isAuthenticated, async (req, res) => {
+    try {
+        const username = req.session.user;
+        const userIsAdmin = await isAdmin(client, username);
 
-  client.query(`UPDATE user_data SET active_profile = $1 WHERE username = $2;`, [false, String(req.session.user)], (error, response) => {
-    console.log(error, response)
-    client.end()
-    res.send()
-  })
+        if (userIsAdmin) {
+            const query = 'SELECT * FROM user_data WHERE id = $1';
+            const values = [req.params.id];
+            const result = await client.query(query, values);
+            return res.json(result.rows);
+        } else {
+            return res.status(403).send('Access denied. Admins only.');
+        }
+    } catch (err) {
+        res.status(500).send("Database query error");
+    }
 });
 
-router.put("/api/activate", async (req, res) => {
-  const client = new Client({
-    user: 'postgres.vpphyjfdeemfzziyoqoh',
-    host: 'aws-0-eu-central-1.pooler.supabase.com',
-    database: 'postgres',
-    password: '*mx5i-psSERVnZ)',
-    port: 5432,
-  });
 
-  client.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected!");
-  });
-
-  client.query(`UPDATE user_data SET active_profile = $1 WHERE username = $2;`, [true, String(req.session.user)], (error, response) => {
-    console.log(error, response)
-    client.end()
-    res.send()
-  })
+router.get("/api/my-data", isAuthenticated, async (req, res) => {
+    try {
+        const query = 'SELECT * FROM user_data WHERE username = $1';
+        const values = [req.session.user];
+        const result = await client.query(query, values);
+        return res.json(result.rows);
+    } catch (err) {
+        res.status(500).send("Database query error");
+    }
 });
+
+
+router.put("/api/deactivate", isAuthenticated, async (req, res) => {
+    try {
+        const query = 'UPDATE user_data SET active_profile = $1 WHERE username = $2';
+        const values = [false, req.session.user];
+        await client.query(query, values);
+        res.send();
+    } catch (err) {
+        res.status(500).send("Database query error");
+    }
+});
+
+
+router.put("/api/activate", isAuthenticated, async (req, res) => {
+    try {
+        const query = 'UPDATE user_data SET active_profile = $1 WHERE username = $2';
+        const values = [true, req.session.user];
+        await client.query(query, values);
+        res.send();
+    } catch (err) {
+        res.status(500).send("Database query error");
+    }
+});
+
 
 router.delete("/api/delete", async (req, res) => {
-  const client = new Client({
-    user: 'postgres.vpphyjfdeemfzziyoqoh',
-    host: 'aws-0-eu-central-1.pooler.supabase.com',
-    database: 'postgres',
-    password: '*mx5i-psSERVnZ)',
-    port: 5432,
-  });
-
-  client.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected!");
-  });
-
-  client.query(`DELETE FROM user_data WHERE username = $1;`, [String(req.session.user)], (error, response) => {
-    console.log(error, response)
-    client.end()
-    res.send()
-  })
+    try {
+        const query = 'DELETE FROM user_data WHERE username = $1';
+        const values = [req.session.user];
+        await client.query(query, values);
+        res.send();
+    } catch (err) {
+        res.status(500).send("Database query error");
+    }
 });
 
+
 router.put("/api/get-admin", async (req, res) => {
-  const client = new Client({
-    user: 'postgres.vpphyjfdeemfzziyoqoh',
-    host: 'aws-0-eu-central-1.pooler.supabase.com',
-    database: 'postgres',
-    password: '*mx5i-psSERVnZ)',
-    port: 5432,
-  });
-
-  client.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected!");
-  });
-
-  console.log(req.body)
-  if (req.body.apw === admin_password) {
-    client.query(`UPDATE user_data SET is_admin = $1 WHERE username = $2;`, [true, String(req.session.user)], (error, response) => {
-      console.log(error, response)
-      client.end()
-      res.send()
-    })
-  } else {
-    client.end()
-    res.send("nah bro")
-  }
-
+    try {
+        if (req.body.apw === admin_password) {
+            const query = 'UPDATE user_data SET is_admin = $1 WHERE username = $2';
+            const values = [true, req.session.user];
+            await client.query(query, values);
+            res.send();
+        } else {
+            res.send("Das Passwort ist falsch!");
+        }
+    } catch (err) {
+        res.status(500).send("Database query error");
+    }
 });
 
 module.exports = router;
