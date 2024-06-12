@@ -7,7 +7,7 @@ const accountManagement = require("./controller/accController.js")
 const dataManagement = require("./controller/dataController.js")
 
 const app = express()
-const port = 3000
+const port = 9000
 
 app.use(cors({
     origin: "*"
